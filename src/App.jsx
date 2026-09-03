@@ -1,17 +1,30 @@
-// src/App.jsx
-
 import * as weatherService from './services/weatherService';
-export default function App() {
-  const fetchWeatherData = async () => {
-    const data = await weatherService.show("Tokyo");
+import WeatherSearch from './components/WeatherSearch/WeatherSearch';
+import WeatherDetails from './components/WeatherDetails/WeatherDetails';
+import { useState } from 'react';
 
-    console.log(data);
+export default function App() {
+  const [weatherData, setWeatherData] = useState(null);
+
+  const fetchWeatherData = async (city) => {
+    const data = await weatherService.show(city);
+
+    const newWeatherState = {
+      location: data.location.name,
+      temperature: data.current.temp_c,
+      condition: data.current.condition.text,
+    };
+
+    setWeatherData(newWeatherState);
   };
 
   return (
     <main>
-      <h1>Weather API Example</h1>
-      <button onClick={fetchWeatherData}>Get Weather Data for City</button>
+      <h1>Weather API</h1>
+
+      <WeatherSearch onFetch={fetchWeatherData} />
+
+      {weatherData && <WeatherDetails weather={weatherData} />}
     </main>
   );
 }
